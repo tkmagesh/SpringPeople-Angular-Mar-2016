@@ -26,6 +26,7 @@
 	angular
 		.module("ng")
 		.run(function($rootScope){
+			console.log(arguments);
 			$rootScope.calculator = new MathCalculator();
 			$rootScope.operation  = '';
 			$rootScope.calculate = function(){
@@ -44,6 +45,6 @@
 	</select>
 	<input type="number" name="" id="" ng-model="calculator.number2">
 	<input type="button" value="Calculate" ng-click="calculate()">
-	<div ng-bind="calculator.result"></div>
+	<div ng-bind="calculator.result | currency:'Rs.'"></div>
 </body>
 </html>
