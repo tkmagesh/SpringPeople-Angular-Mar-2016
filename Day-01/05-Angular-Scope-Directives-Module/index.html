@@ -33,6 +33,9 @@
 			var gross = this.basic + this.hra + this.da;
 			this.salary = gross * ((100-this.tax)/100);
 		}
+		SalaryCalculator.prototype.reset = function(){
+			this.basic = this.hra = this.da = this.tax = this.salary = 0;
+		}
 		angular
 			.module("ng")
 			.run(function($rootScope){
@@ -63,6 +66,7 @@
 		</div>
 		<div class="field">
 			<input type="button" value="Calculate" id="btnCalculate" ng-click="calculator.calculate()">
+			<input type="button" value="Reset" ng-click="calculator.reset()">
 		</div>
 		<div class="field">
 			<div id="divResult" ng-bind="calculator.salary">[Salary]</div>
