@@ -16,6 +16,7 @@
 		}
 	</style>
 	<script src="jquery-1.12.1.js"></script>
+	<script src="angular.min.js"></script>
 	<script>
 		Object.prototype.toInt = function(){
 			return parseInt(this,10);
@@ -23,80 +24,71 @@
 
 		//Model
 		function SalaryCalculator(){
-			var _data = {
-				basic : 0,
-				hra: 0,
-				da : 0,
-				tax : 0,
-				salary : 0
-			};
-			this.get = function(attrName){
-				return _data[attrName];
-			};
-			this.set = function(attrName, value){
-				_data[attrName] = value;
-				var listenerFns = _eventHandlers[attrName];
-				listenerFns.forEach(function(listenerFn){
-					listenerFn();
-				});
-			};
-
-			var _eventHandlers = {
-				basic : [],
-				hra : [],
-				da : [],
-				tax : [],
-				salary : []
-			};
-
-			this.onChange = function(attrName, listenerFn){
-				_eventHandlers[attrName].push(listenerFn);
-			}
+			this.basic = 0;
+			this.hra = 0;
+			this.da = 0;
+			this.tax = 0;
+			this.salary = 0;
 		}
 		SalaryCalculator.prototype.calculate = function(){
-			var gross = this.get('basic') + this.get('hra') + this.get('da');
-			var net = gross * ((100-this.get('tax'))/100);
-			this.set('salary', net);
+			var gross = this.basic + this.hra + this.da;
+			this.salary = gross * ((100-this.tax)/100);
 		}
+
+		angular.injector(["ng"]).invoke(function($rootScope){
+			window.scope = $rootScope;
+		});
+
 
 		//View/Controller
 		$(document).ready(function(){
-			
-			window.calculator = new SalaryCalculator();
+			scope.calculator = window.calculator = new SalaryCalculator();
 			//React to user actions
 			$("#txtBasic").change(function(){
-				calculator.set('basic', $("#txtBasic").val().toInt());
+				scope.$apply(function(){
+					calculator.basic = $("#txtBasic").val().toInt();
+				});
 			});
 			$("#txtHra").change(function(){
-				calculator.set('hra', $("#txtHra").val().toInt());
+				scope.$apply(function(){
+					calculator.hra = $("#txtHra").val().toInt();
+				});
 			});
 			$("#txtDa").change(function(){
-				calculator.set('da', $("#txtDa").val().toInt());
+				scope.$apply(function(){
+					calculator.da = $("#txtDa").val().toInt();
+				});
 			});
 			$("#rangeTax").change(function(){
-				calculator.set('tax', $("#rangeTax").val().toInt());
+				scope.$apply(function(){
+					calculator.tax = $("#rangeTax").val().toInt();
+				});
 			});
 			$("#btnCalculate").click(function(){
-				calculator.calculate();
+				scope.$apply(function(){
+					calculator.calculate();	
+				});
 			});
 
 		
 			//React to model changes
-			calculator.onChange('salary', function(){
-				$("#divResult").html(calculator.get('salary'));	
+			scope.$watch('calculator.salary', function(newValue){
+				$("#divResult").html(newValue);	
 			});
-			calculator.onChange('basic', function(){
-				$("#txtBasic").val(calculator.get('basic'));
+			scope.$watch('calculator.basic', function(newValue){
+				$("#txtBasic").val(newValue);
 			});
-			calculator.onChange('hra', function(){
-				$("#txtHra").val(calculator.get('hra'));
+			scope.$watch('calculator.hra', function(newValue){
+				$("#txtHra").val(newValue);
 			});
-			calculator.onChange('da', function(){
-				$("#txtDa").val(calculator.get('da'));
+			scope.$watch('calculator.da', function(newValue){
+				$("#txtDa").val(newValue);
 			});
-			calculator.onChange('tax', function(){
-				$("#rangeTax").val(calculator.get('tax'));
-				$("#spanTax").html(calculator.get('tax'));
+			scope.$watch('calculator.tax', function(newValue){
+				$("#rangeTax").val(newValue);
+			});
+			scope.$watch('calculator.tax', function(newValue){
+				$("#spanTax").html(newValue);
 			});
 		});
 	</script>
