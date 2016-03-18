@@ -6,9 +6,9 @@
 	<script>
 		/* Use Cases
 		============
-		1. List the bugs
+		1. List the bugs - done
 		2. Add a new bug - done
-		3. Toggle the bug status
+		3. Toggle the bug status - done
 		4. Remove closed bugs
 		5. Display Statistics
 		5. Search for the bugs
@@ -37,6 +37,7 @@
 	}
 	.bugname{
 		cursor: pointer;
+		font-size: 18pt;
 	}
 	ol{
 		list-style: none;
@@ -54,16 +55,23 @@
 		var bugTrackerApp = angular.module("bugTrackerApp", []);
 		bugTrackerApp.controller("bugsController", function($scope){
 			$scope.bugs = [
-				"Null pointer exception",
-				"File not found",
-				"Data validation error",
-				"Number format exception",
-				"Object reference or with block not set"
+				{name  : "Null pointer exception", isClosed : false},
+				{name  : "File not found", isClosed : false},
+				{name  : "Data validation error", isClosed : true},
+				{name  : "Number format exception", isClosed : true},
+				{name  : "Object reference or with block not set", isClosed : false},
 			];
 			$scope.newBugName = '';
 			$scope.addNew = function(bug){
-				$scope.bugs.push(bug);
+				var newBug = {
+					name : bug,
+					isClosed : false
+				};
+				$scope.bugs.push(newBug);
 			};
+			$scope.toggle = function(bug){
+				bug.isClosed = !bug.isClosed;
+			}
 		})
 
 	</script>
@@ -95,7 +103,9 @@
 			<input type="button" value="Add Bug" ng-click="addNew(newBugName)">
 			<input type="button" value="Remove Closed">
 			<ol>
-				<li ng-repeat="bug in bugs"><span class="bugname">{{bug}}</span></li>
+				<li ng-repeat="bug in bugs">
+					<span class="bugname" ng-click="toggle(bug)" ng-class="{closed : bug.isClosed}">{{bug}}</span>
+				</li>
 			</ol>
 		</section>
 	</div>
