@@ -60,8 +60,9 @@
 				toggle : function(bug){
 					bug.isClosed = !bug.isClosed;
 				},
-				create : function(bugName){
+				create : function(id, bugName){
 					return {
+						id : id,
 						name : bugName,
 						isClosed : false
 					};
@@ -71,25 +72,34 @@
 
 		
 		bugTrackerApp.controller("bugsController", function($scope, bugOperations){
-			$scope.bugs = [
-				{name  : "Null pointer exception", isClosed : false},
-				{name  : "File not found", isClosed : false},
-				{name  : "Data validation error", isClosed : true},
-				{name  : "Number format exception", isClosed : true},
-				{name  : "Object reference or with block not set", isClosed : false},
-			];
+			
+			var storage = window.localStorage;
+			var maxBugId = 0;
+
+			$scope.bugs = [];
+
+			for(var i=0; i<storage.length; i++){
+				var bug = angular.fromJson(storage.getItem(storage.key(i)));
+				maxBugId = maxBugId > bug.id ? maxBugId : bug.id;
+				$scope.bugs.push(bug);
+			}
+
 			$scope.newBugName = '';
 			$scope.addNew = function(bug){
-				var newBug = bugOperations.create(bug);
+				var newBug = bugOperations.create(++maxBugId, bug);
+				storage.setItem(newBug.id, angular.toJson(newBug));
 				$scope.bugs.push(newBug);
 			};
 			$scope.toggle = function(bug){
 				bugOperations.toggle(bug);
+				storage.setItem(bug.id, angular.toJson(bug));
 			};
 			$scope.removeClosed = function(){
 				for(var i=$scope.bugs.length-1; i>=0; i--)
-					if ($scope.bugs[i].isClosed)
+					if ($scope.bugs[i].isClosed){
+						storage.removeItem($scope.bugs[i].id);
 						$scope.bugs.splice(i,1);
+					}
 			};
 
 		});
