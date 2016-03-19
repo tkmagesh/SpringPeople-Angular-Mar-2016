@@ -16,7 +16,7 @@
 		7. Improvise the bug display - done
 		8. Persist the bugs in the local storage - done
 		9. Display "CreatedAt" - done
-		10. Persist the bugs in the server
+		10. Persist the bugs in the server - done
 		11. Categorize the bugs
 		*/
 
@@ -103,7 +103,7 @@
 
 			this.remove = function(bug){
 				return $http.delete("http://localhost:3000/bugs/" + bug.id);
-			}
+			};
 		})
 
 		bugTrackerApp.controller("bugsController", function($scope, bugService){
